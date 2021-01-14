@@ -1,0 +1,39 @@
+@import "_variables";
+@import "_mixins";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: $bg;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.btn, input, select {
+  border-radius: 0;
+}
+
+form {
+  label, input, select {
+    display: block;
+    width: 100%;
+    margin: 2vh 0;
+  }
+  input, select {
+    padding: 1vh;
+    border: 1px solid $border;
+  }
+  input[type="submit"]{
+    width: auto;
+    margin: 2vh auto;
+  }
+}
