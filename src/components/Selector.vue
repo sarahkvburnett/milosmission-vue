@@ -1,19 +1,29 @@
 <template>
-  <form class="container">
+  <form class="border" @submit.prevent="$emit('change-chosen', chosenItem)">
+    <h1 class="bg-light text-center py-3">Choose</h1>
     <section>
-      <div v-for="item in items" :key="item" :item="item">
-        <img :src="`./images/${item.filename}`" height="150" />
-        <input type="checkbox" />
-      </div>
+        <Uploader/>
+        <SelectorItem v-for="item in items" :key="item.id" :item="item" :chosen="chosen"  v-model="chosenItem" />
     </section>
-    <button class="btn btn-primary">Update</button>
+    <p class="d-flex justify-content-between px-5">
+      <button class="btn btn-primary">Update</button>
+      <button class="btn btn-secondary" type="button" @click="$emit('close-selector')">Cancel</button>
+    </p>
   </form>
 </template>
 
 <script>
+import SelectorItem from "./SelectorItem";
+import Uploader from "./Uploader";
 export default {
   name: "Selector",
-  props: ["items"]
+  components: {Uploader, SelectorItem},
+  props: ["items", "chosen"],
+  data(){
+    return {
+      chosenItem: this.chosen,
+    }
+  },
 };
 </script>
 
@@ -24,16 +34,17 @@ form > section {
   justify-content: center;
 }
 div {
-  border: 1px solid #778899;
   margin: 10px;
   width: 140px;
+  background: #fff;
 }
 form {
-  border: 1px solid #778899;
-}
-img {
-  height: 140px;
-  width: 140px;
-  object-fit: cover;
+  position: absolute;
+  height: 90vh;
+  width: 90vw;
+  top: 5vh;
+  left: 5vw;
+  background: #ffffff;
+  overflow-y: auto;
 }
 </style>
