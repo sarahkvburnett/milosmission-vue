@@ -2,7 +2,6 @@
   <form class="border" @submit.prevent="$emit('change-chosen', chosenItem)">
     <h1 class="bg-light text-center py-3">Choose</h1>
     <section>
-        <Uploader/>
         <SelectorItem v-for="item in items" :key="item.id" :item="item" :chosen="chosen"  v-model="chosenItem" />
     </section>
     <p class="d-flex justify-content-between px-5">
@@ -14,10 +13,9 @@
 
 <script>
 import SelectorItem from "./SelectorItem";
-import Uploader from "./Uploader";
 export default {
   name: "Selector",
-  components: {Uploader, SelectorItem},
+  components: {SelectorItem},
   props: ["items", "chosen"],
   data(){
     return {

@@ -1,6 +1,7 @@
 <template>
-<!--  need to add action back in it was bitching-->
-  <form>
+<!--  todo need to add action back in it was bitching-->
+  <form class="border p-3 m-3">
+    <h2>Info</h2>
     <!--        todo: add error component-->
     <FormField
       v-for="(value, name) in fields"
@@ -10,10 +11,11 @@
       :options="options.hasOwnProperty(name) ? options[name] : []"
       :value="value"
     />
+    <button class="btn btn-primary">Update</button>
   </form>
 </template>
 
-<!--need to sort out the v-model data binding for the form values
+<!--todo need to sort out the v-model data binding for the form values
 see here: https://stackoverflow.com/questions/47311936/v-model-and-child-components
 -->
 
@@ -27,9 +29,6 @@ export default {
     return {
       formFields: {...this.fields}
     }
-  },
+  }
 };
 </script>
-
-<style scoped></style>
-

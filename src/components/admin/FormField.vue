@@ -1,6 +1,6 @@
 <template>
   <div v-if="type !==  'hidden'">
-    <label>{{ field }}</label>
+    <label>{{ fieldName }}</label>
     <select v-if="type === 'select'">
       <option
         v-for="option in options"
@@ -28,9 +28,16 @@
 </template>
 
 <script>
+import toTitleCase from "../../utilities/toTitleCase";
+
 export default {
   name: "FormField",
-  props: ["value", "field", "type", "options"]
+  props: ["value", "field", "type", "options"],
+  computed: {
+    fieldName(){
+      return toTitleCase(this.field);
+    }
+  }
 };
 </script>
 

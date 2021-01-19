@@ -50,7 +50,7 @@ export default {
     };
   },
   components: {},
-  mounted() {
+  created() {
     axios
       .get("/api/animals")
       .then(res => (this.animals = res.data.fields))

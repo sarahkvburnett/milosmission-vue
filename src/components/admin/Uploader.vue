@@ -4,15 +4,15 @@
             <i class="fas fa-exclamation-triangle fa-2x"/>
             <p>Error <br> Please try again </p>
         </div>
-        <form v-else class="uploader bg-primary text-center border" @drop="handleFileDrop" enctype="multipart/form-data">
+        <form v-else class="uploader bg-primary text-center border" @drop="handleFileDrop" enctype="multipart/form-data" @ondragleave="removeDragHover" @ondragover="showDragHover" :class="showDragOver && 'drag-hover'">
             <progress v-if="uploading"/>
             <i class="fas fa-cloud-upload-alt fa-2x"/>
             <p>Choose files or drag & drop here</p>
             <input type="file" name="filename" @change="handleFileInput" ref="file">
         </form>
-        <div v-for="item in items" :key="item.id" :item="item">
-            <Thumbnail :filepath="item.filename"/>
-            <button class="delete btn btn-danger position-relative" @click="deleteFile(item.id)">&times;</button>
+        <div v-for="file in files" :key="file.id" :item="file">
+            <Thumbnail :filepath="file.filename"/>
+            <button class="delete btn btn-danger position-relative" @click="deleteFile(file.id)">&times;</button>
         </div>
     </section>
 </template>
@@ -23,31 +23,25 @@
     export default {
         name: "Uploader",
         components: {Thumbnail},
+        props: ['category', 'subcategory', 'media'],
         data(){
             return {
-                items: [{filepath: 'animals/milo/milo.jpg'}],
+                files: this.media,
                 uploading: false,
                 progress: 0,
                 error: false,
+                showDragOver: false,
             }
         },
         methods: {
-            addFile(file){
-                if (!file) return;
+            addFile(){
+                if (!this.file) return;
                 this.uploading = true;
-                console.log(file.files[0]);
-                this.uploading = false;
-            },
-            handleFileDrop(e){
-                this.addFile(e.dataTransfer.files);
-            },
-            handleFileInput(){
-                this.uploading = true;
-                this.file = this.$refs.file.files[0];
                 let formData = new FormData();
                 formData.append('filename', this.file);
-                //todo need to sort otu category/subcategory/type situation
-                formData.append('category', 'animals');
+                formData.append('category', this.category);
+                formData.append('subcategory', this.subcategory);
+                //todo move this type to php
                 formData.append('type', 'image');
                 const config = {
                     headers: {
@@ -60,21 +54,31 @@
                     }
                 };
                 axios.post('/api/admin/media/details', formData, config)
-                    .then(res => this.items.unshift(res.data.fields))
+                    .then(res => this.files.unshift(res.data.fields))
                     .catch(() => this.error = true);
                 this.uploading = false;
             },
+            handleFileDrop(e){
+                this.removeDragHover();
+                this.file = e.dataTransfer.files[0];
+                this.addFile();
+            },
+            handleFileInput(){
+                this.file = this.$refs.file.files[0];
+                this.addFile()
+            },
             deleteFile(id){
                 axios.post('/api/admin/media/delete', encodeURI(`id=${id}`))
-                    .then( () => this.items = this.items.filter( item => item.id !== id))
-                //todo catch;
+                    .then( () => this.files = this.files.filter( file => file.id !== id))
+                    .catch( () => this.error = true)
+            },
+            showDragHover(){
+                this.showDragOver = true;
+            },
+            removeDragHover(){
+                this.showDragOver = false;
             }
-        },
-        mounted(){
-            axios.get('/api/admin/media')
-            .then( res => this.items = res.data.fields);
-            //todo catch;
-        },
+        }
     }
 </script>
 
@@ -137,5 +141,8 @@
         margin: 0;
         top: -24px;
         line-height: 1.1;
+    }
+    .drag-hover {
+        opacity: 0.7;
     }
 </style>
